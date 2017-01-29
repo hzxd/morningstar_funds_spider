@@ -30,9 +30,9 @@ def get_manager_time(tr_text):
     time = tr_text.th.span.text
     time = strip(time)
     if time.find(M_DASH) == -1:
-        return 0, 0
+        return ''
     else:
-        return [strip(t) for t in time.split(M_DASH)]
+        return '-'.join([strip(t) for t in time.split(M_DASH)])
 
 
 def get_manager_abstract(tr_text):
@@ -42,13 +42,16 @@ def get_manager_abstract(tr_text):
 
 def get_manager_certification(tr_text):
     tr_text = check_bs4(tr_text)
-    return tr_text.find(text='Certification').parent.parent.next_sibling.next_sibling.get_text()
+    td = tr_text.find(text='Certification')
+    if not td:
+        return ''
+    return td.parent.parent.next_sibling.next_sibling.get_text()
 
 
 def get_manager_education(tr_text):
     tr_text = check_bs4(tr_text)
     schools = tr_text.find(text='Education').parent.parent.next_sibling.next_sibling
-    return [strip(i.get_text().replace(u',', '')) for i in schools.find_all('td')]
+    return '\n'.join([strip(i.get_text().replace(u',', '')) for i in schools.find_all('td')])
 
 
 def get_info_by_key_words(text, key):
