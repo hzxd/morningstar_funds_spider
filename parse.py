@@ -50,7 +50,10 @@ def get_manager_certification(tr_text):
 
 def get_manager_education(tr_text):
     tr_text = check_bs4(tr_text)
-    schools = tr_text.find(text='Education').parent.parent.next_sibling.next_sibling
+    schools = tr_text.find(text='Education')
+    if schools is None:
+        return ''
+    schools = schools.parent.parent.next_sibling.next_sibling
     return '\n'.join([strip(i.get_text().replace(u',', '')) for i in schools.find_all('td')])
 
 
