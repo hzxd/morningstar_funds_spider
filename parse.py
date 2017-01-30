@@ -7,7 +7,7 @@ M_DASH = u'—'
 
 
 def check_bs4(text):
-    if not isinstance(text, BeautifulSoup):
+    if isinstance(text, str):
         text = strip(text)
         text = BeautifulSoup(text, 'lxml')
     return text
@@ -22,10 +22,14 @@ def strip(text):
 
 def get_manager_name(tr_text):
     tr_text = check_bs4(tr_text)
-    return strip(tr_text.th.contents[0])
+    for a in tr_text.find_all('th', limit=1):
+        result =  a.contents[0]
+        return strip(result)
+    return ''
 
 
 def get_manager_time(tr_text):
+    print tr_text.th
     tr_text = check_bs4(tr_text)
     time = tr_text.th.span.text
     time = strip(time)

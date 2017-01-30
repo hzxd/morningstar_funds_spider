@@ -5,6 +5,7 @@ import string
 from HTMLParser import HTMLParser
 import requests
 import json
+import spider
 tr_text = """<tr>
                 <th align="left" class="str" scope="row">
                     Donald J. Nesbitt
@@ -84,17 +85,20 @@ tr_text = """<tr>
             </tr>"""
 
 
-print parse.get_manager_name(tr_text)
-print parse.get_manager_time(tr_text)
-print parse.get_manager_abstract(tr_text)
-print parse.get_manager_certification(tr_text)
-print parse.get_manager_education(tr_text)
+# print parse.get_manager_name(tr_text)
+# print parse.get_manager_time(tr_text)
+# print parse.get_manager_abstract(tr_text)
+# print parse.get_manager_certification(tr_text)
+# print parse.get_manager_education(tr_text)
+#
+# advisor_jsonp = requests.get('http://financials.morningstar.com/oprn/c-advisorInfo.action?&t=F000002OBU&region=usa&culture=en-US&cur=&callback=jsonp')
+# advisor = advisor_jsonp.content[6:-1]
+# advisor = json.loads(advisor)['html']
+#
+# print parse.get_fund_inception(advisor)
+# print parse.get_fund_subadvisor(advisor)
+# print parse.get_fund_name_of_issuer(advisor)
+# print parse.get_fund_advisor(advisor)
+m = requests.get('http://financials.morningstar.com/oprn/c-managers.action?&t=F000002OBU&region=usa&culture=en-US&cur=&callback=')
 
-advisor_jsonp = requests.get('http://financials.morningstar.com/oprn/c-advisorInfo.action?&t=F000002OBU&region=usa&culture=en-US&cur=&callback=jsonp')
-advisor = advisor_jsonp.content[6:-1]
-advisor = json.loads(advisor)['html']
-
-print parse.get_fund_inception(advisor)
-print parse.get_fund_subadvisor(advisor)
-print parse.get_fund_name_of_issuer(advisor)
-print parse.get_fund_advisor(advisor)
+print spider.get_manager_info(m.content)
