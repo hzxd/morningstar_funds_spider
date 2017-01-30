@@ -14,22 +14,24 @@ def check_bs4(text):
 
 
 def strip(text):
-    text = text.replace('\n', '')
-    text = text.replace('\t', '')
+    text = text.replace(r'\/', "/")
+    text = text.replace(r'\n', '')
+    text = text.replace(r'\t', '')
     text = string.strip(text)
+    print text
     return text
 
 
 def get_manager_name(tr_text):
     tr_text = check_bs4(tr_text)
-    for a in tr_text.find_all('th', limit=1):
-        result =  a.contents[0]
-        return strip(result)
-    return ''
+    try:
+        return strip(tr_text.th.contents[0])
+    except Exception as e:
+        print e.args
+        return ''
 
 
 def get_manager_time(tr_text):
-    print tr_text.th
     tr_text = check_bs4(tr_text)
     time = tr_text.th.span.text
     time = strip(time)

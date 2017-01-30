@@ -19,6 +19,7 @@ ADVISOR_FIELDS = [
 ]
 
 
+
 def get_json(text):
     json_dict = json.loads(text)
     html = json_dict['html']
@@ -44,7 +45,7 @@ def get_urls(html):
 def get_root_html(url):
     req = requests.get(url)
     if req.content.find('Error Page') > 0 or req.content.find('script') < 0:
-        return None
+        raise
     return req.content
 
 
@@ -57,12 +58,14 @@ def get_fund_info(html):
 
 def get_manager_info(html):
     html = parse.check_bs4(html)
-    tr_htmls = html.find_all('tr')
+    tr_htmls = html.find('tbody').children
     result = []
     for tr_html in tr_htmls:
-
+        if tr_html.name !='tr':
+            continue
         if tr_html.attrs.get('class', None) is not None and tr_html.attrs['class'][0].find('hr') >= 0:
             continue
+
         manager = {}
         for field in MANGER_FIELDS:
             manager[field] = getattr(parse, 'get_' + field)(tr_html).encode('utf-8')

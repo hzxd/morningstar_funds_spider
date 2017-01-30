@@ -99,6 +99,7 @@ tr_text = """<tr>
 # print parse.get_fund_subadvisor(advisor)
 # print parse.get_fund_name_of_issuer(advisor)
 # print parse.get_fund_advisor(advisor)
-m = requests.get('http://financials.morningstar.com/oprn/c-managers.action?&t=F000002OBU&region=usa&culture=en-US&cur=&callback=')
+# m = requests.get('http://financials.morningstar.com/oprn/c-managers.action?&t=F000002OBU&region=usa&culture=en-US&cur=&callback=')
+m = requests.get('http://financials.morningstar.com/oprn/c-managers.action?&t=F000003OBU&region=usa&culture=en-US&cur=&callback=')
 
 print spider.get_manager_info(m.content)

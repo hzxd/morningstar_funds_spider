@@ -5,7 +5,7 @@ import json
 from bs4 import BeautifulSoup
 import parse
 import re
-
+import spider
 
 
 if __name__ == '__main__':
@@ -14,7 +14,10 @@ if __name__ == '__main__':
     f_error = open('error.csv','a+')
     for url in f.readlines():
         print '开始抓取{0}'.format(url)
-        r = get_fund_info(url)
+
+        html = spider.get_root_html(url)
+
+        urls = spider.get_urls()
         if not r:
             print '抓取失败, 写入失败列表'
             f_error.write(url)
