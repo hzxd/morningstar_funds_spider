@@ -95,7 +95,7 @@ def get_fund_name(text):
     name = text.find(attrs={'class': 'r_title'}).h1
     if not name:
         raise  Exception("ParseError")
-    return name.get_text()
+    return strip(name.get_text())
 
 
 def get_fund_id(text):
@@ -103,4 +103,4 @@ def get_fund_id(text):
     name = text.find(attrs={'class': 'r_title'}).span
     if not name:
         raise  Exception("ParseError")
-    return name.get_text()
+    return strip(name.get_text())

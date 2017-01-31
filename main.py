@@ -32,6 +32,7 @@ def get_info_by_url(url):
             manager_wr.writerow([fund_id] + [v for v in m.values()])
         fund_wr.writerow([fund_id, fund_name] + [v for v in fund.values()])
     except Exception as e:
+        print e.args
         if e.args[0] == 'PageError':
             print 'Page error, writing to the error list'
             f_error.write(url)
