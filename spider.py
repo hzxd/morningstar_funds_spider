@@ -3,7 +3,6 @@ import json
 import requests
 import re
 import parse
-
 MANGER_FIELDS = [
     'manager_name',
     'manager_time',
@@ -45,13 +44,14 @@ def get_urls(html):
 def get_root_html(url):
     req = requests.get(url)
     if req.content.find('Error Page') > 0 or req.content.find('script') < 0:
-        raise
+        raise Exception("PageError")
     return req.content
 
 
 def get_fund_info(html):
     result = {}
     for field in ADVISOR_FIELDS:
+        print 'Get ' + field
         result[field] = getattr(parse, 'get_' + field)(html).encode('utf-8')
     return result
 
@@ -63,20 +63,20 @@ def get_manager_info(html):
     for tr_html in tr_htmls:
         if tr_html.name !='tr':
             continue
-        if tr_html.attrs.get('class', None) is not None and tr_html.attrs['class'][0].find('hr') >= 0:
+        if tr_html.attrs.get('class', None) is not None and \
+                len(tr_html.attrs['class'])>0:
             continue
 
         manager = {}
         for field in MANGER_FIELDS:
+            print 'Get '+field
             manager[field] = getattr(parse, 'get_' + field)(tr_html).encode('utf-8')
-
         result.append(manager)
     return result
 
 # def get_manager_info(url):
 #     try:
-#         manger_html = get_json(requests.get('http://' + urls[0]).content)
-#         advisor_html = get_json(requests.get('http://' + urls[1]).content)
+#
 #     except Exception, e:
 #         print e.args
 #         return None

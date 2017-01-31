@@ -2,12 +2,11 @@
 from bs4 import BeautifulSoup
 import string
 import re
-
 M_DASH = u'—'
 
 
 def check_bs4(text):
-    if isinstance(text, str):
+    if isinstance(text, str) or isinstance(text,unicode):
         text = strip(text)
         text = BeautifulSoup(text, 'lxml')
     return text
@@ -15,10 +14,9 @@ def check_bs4(text):
 
 def strip(text):
     text = text.replace(r'\/', "/")
-    text = text.replace(r'\n', '')
-    text = text.replace(r'\t', '')
     text = string.strip(text)
-    print text
+    text = text.replace('\n', '')
+    text = text.replace('\t', '')
     return text
 
 
@@ -28,7 +26,7 @@ def get_manager_name(tr_text):
         return strip(tr_text.th.contents[0])
     except Exception as e:
         print e.args
-        return ''
+        raise Exception("ParseError")
 
 
 def get_manager_time(tr_text):
@@ -43,7 +41,11 @@ def get_manager_time(tr_text):
 
 def get_manager_abstract(tr_text):
     tr_text = check_bs4(tr_text)
-    return tr_text.td.table.tr.td.get_text()
+    try:
+        return tr_text.td.table.tr.td.get_text()
+    except Exception as e:
+        print e.args
+        raise  Exception("ParseError")
 
 
 def get_manager_certification(tr_text):
@@ -57,7 +59,7 @@ def get_manager_certification(tr_text):
 def get_manager_education(tr_text):
     tr_text = check_bs4(tr_text)
     schools = tr_text.find(text='Education')
-    if schools is None:
+    if not schools:
         return ''
     schools = schools.parent.parent.next_sibling.next_sibling
     return '\n'.join([strip(i.get_text().replace(u',', '')) for i in schools.find_all('td')])
@@ -67,7 +69,7 @@ def get_info_by_key_words(text, key):
     text = check_bs4(text)
     info = text.find(text=re.compile(".*{key}.*".format(key=key)))
     if info is None:
-        raise ValueError
+        raise  Exception("ParseError")
     result = info.parent.parent.td.get_text()
     return strip(result)
 
@@ -92,13 +94,13 @@ def get_fund_name(text):
     text = check_bs4(text)
     name = text.find(attrs={'class': 'r_title'}).h1
     if not name:
-        raise ValueError
+        raise  Exception("ParseError")
     return name.get_text()
 
 
 def get_fund_id(text):
     text = check_bs4(text)
-    name = text.find(attrs={'class': 'r_title'}).h1
+    name = text.find(attrs={'class': 'r_title'}).span
     if not name:
-        raise ValueError
+        raise  Exception("ParseError")
     return name.get_text()
