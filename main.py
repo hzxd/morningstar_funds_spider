@@ -31,18 +31,19 @@ def get_info_by_url(url):
         for m in manager:
             manager_wr.writerow([fund_id] + [v for v in m.values()])
         fund_wr.writerow([fund_id, fund_name] + [v for v in fund.values()])
+        return True
     except Exception as e:
-        print e.args
-        if e.args[0] == 'PageError':
-            print 'Page error, writing to the error list'
-            f_error.write(url)
-
-        if e.args[0] == 'ParseError':
-            print 'Parsing error, writing to the exception list'
+        if len(e.args)>0:
+            case = e.args[0]
+            switch = {
+                'PageError': f_error.write,
+                'ParseError':f_exception.write,
+            }
+            switch.get(case,f_exception.write)(url)
+        else:
             f_exception.write(url)
+        return False
 
-        print 'Parsing exception, writing to the exception list'
-        f_exception.write(url)
     finally:
         f_exception.close()
         f_error.close()
@@ -51,14 +52,20 @@ def get_info_by_url(url):
 
 
 if __name__ == '__main__':
-    f = open('urls.txt')
+    f = open('fund_info.txt')
 
     i = 0
     for u in f.readlines():
         if i<0:
             i+=1
             continue
-        get_info_by_url(u)
+        info  = u.split('|')
+        for t in info[1:]:
+            if len(t)>0:
+                print 'try '+t
+                url_ = 'http://financials.morningstar.com/fund/management.html?t={t}&region=usa&culture=en_US'.format(t=t)
+                if get_info_by_url(url_):
+                    break
         i+=1
         print 'Starting get url: {0}, No.{1}'.format(u,i)
 
